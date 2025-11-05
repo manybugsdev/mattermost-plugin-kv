@@ -11,11 +11,30 @@ import (
 const (
 	// maxKeys is the maximum number of keys to list at once
 	maxKeys = 100
+	// maxValueSize is the maximum size of a value in bytes (1MB)
+	maxValueSize = 1024 * 1024
+	// maxKeyLength is the maximum length of a key
+	maxKeyLength = 256
 )
 
 // Plugin implements the interface expected by the Mattermost server to communicate between the server and plugin processes.
 type Plugin struct {
 	plugin.MattermostPlugin
+}
+
+// validateKey checks if a key is valid and safe to use
+func validateKey(key string) error {
+	if len(key) == 0 {
+		return fmt.Errorf("key cannot be empty")
+	}
+	if len(key) > maxKeyLength {
+		return fmt.Errorf("key length exceeds maximum of %d characters", maxKeyLength)
+	}
+	// Prevent directory traversal attacks
+	if strings.Contains(key, "..") || strings.Contains(key, "/") || strings.Contains(key, "\\") {
+		return fmt.Errorf("key contains invalid characters")
+	}
+	return nil
 }
 
 // OnActivate is invoked when the plugin is activated.
@@ -84,6 +103,16 @@ func (p *Plugin) handleSet(args []string) (*model.CommandResponse, *model.AppErr
 	key := args[0]
 	value := strings.Join(args[1:], " ")
 
+	// Validate key
+	if err := validateKey(key); err != nil {
+		return p.sendErrorResponse(fmt.Sprintf("Invalid key: %v", err)), nil
+	}
+
+	// Validate value size
+	if len(value) > maxValueSize {
+		return p.sendErrorResponse(fmt.Sprintf("Value size exceeds maximum of %d bytes", maxValueSize)), nil
+	}
+
 	if err := p.API.KVSet(key, []byte(value)); err != nil {
 		return p.sendErrorResponse(fmt.Sprintf("Error setting key: %v", err)), nil
 	}
@@ -98,6 +127,11 @@ func (p *Plugin) handleGet(args []string) (*model.CommandResponse, *model.AppErr
 	}
 
 	key := args[0]
+
+	// Validate key
+	if err := validateKey(key); err != nil {
+		return p.sendErrorResponse(fmt.Sprintf("Invalid key: %v", err)), nil
+	}
 
 	value, err := p.API.KVGet(key)
 	if err != nil {
@@ -118,6 +152,11 @@ func (p *Plugin) handleDelete(args []string) (*model.CommandResponse, *model.App
 	}
 
 	key := args[0]
+
+	// Validate key
+	if err := validateKey(key); err != nil {
+		return p.sendErrorResponse(fmt.Sprintf("Invalid key: %v", err)), nil
+	}
 
 	if err := p.API.KVDelete(key); err != nil {
 		return p.sendErrorResponse(fmt.Sprintf("Error deleting key: %v", err)), nil
