@@ -8,6 +8,11 @@ import (
 	"github.com/mattermost/mattermost/server/public/plugin"
 )
 
+const (
+	// maxKeys is the maximum number of keys to list at once
+	maxKeys = 100
+)
+
 // Plugin implements the interface expected by the Mattermost server to communicate between the server and plugin processes.
 type Plugin struct {
 	plugin.MattermostPlugin
@@ -44,15 +49,21 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 
 	subcommand := parts[1]
 
+	// Get remaining arguments safely
+	var cmdArgs []string
+	if len(parts) > 2 {
+		cmdArgs = parts[2:]
+	}
+
 	switch subcommand {
 	case "set":
-		return p.handleSet(parts[2:])
+		return p.handleSet(cmdArgs)
 	case "get":
-		return p.handleGet(parts[2:])
+		return p.handleGet(cmdArgs)
 	case "delete":
-		return p.handleDelete(parts[2:])
+		return p.handleDelete(cmdArgs)
 	case "list":
-		return p.handleList(parts[2:])
+		return p.handleList(cmdArgs)
 	case "help":
 		return p.sendHelpResponse(), nil
 	default:
@@ -118,7 +129,7 @@ func (p *Plugin) handleList(args []string) (*model.CommandResponse, *model.AppEr
 		prefix = args[0]
 	}
 
-	keys, err := p.API.KVList(0, 100)
+	keys, err := p.API.KVList(0, maxKeys)
 	if err != nil {
 		return p.sendErrorResponse(fmt.Sprintf("Error listing keys: %v", err)), nil
 	}
