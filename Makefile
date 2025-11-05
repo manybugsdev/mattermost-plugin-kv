@@ -27,7 +27,7 @@ $(BINARY_WINDOWS):
 
 dist: build
 	rm -rf dist
-	mkdir -p dist/$(PLUGIN_ID)
+	mkdir -p dist/$(PLUGIN_ID)/server
 	cp plugin.json dist/$(PLUGIN_ID)/
 	cp -r server/dist dist/$(PLUGIN_ID)/server/
 	cd dist && tar -czf $(PLUGIN_ID)-$(PLUGIN_VERSION).tar.gz $(PLUGIN_ID)
