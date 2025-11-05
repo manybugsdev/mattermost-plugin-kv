@@ -68,7 +68,7 @@ Example: `/kv list my`
 ## Requirements
 
 - Mattermost Server v5.20.0 or later
-- Go 1.19 or later (for building from source)
+- Go 1.21 or later (for building from source)
 
 ## License
 
