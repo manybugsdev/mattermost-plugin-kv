@@ -1,5 +1,7 @@
 # Mattermost KV Manager Plugin
 
+[![CI](https://github.com/manybugsdev/mattermost-plugin-kv/actions/workflows/ci.yml/badge.svg)](https://github.com/manybugsdev/mattermost-plugin-kv/actions/workflows/ci.yml)
+
 A Mattermost plugin that provides slash commands to perform CRUD (Create, Read, Update, Delete) operations on Mattermost's internal KV (Key-Value) store.
 
 ## Features
@@ -17,14 +19,46 @@ A Mattermost plugin that provides slash commands to perform CRUD (Create, Read, 
 
 ## Building from Source
 
+This plugin uses the [Mattermost Plugin Starter Template](https://github.com/mattermost/mattermost-plugin-starter-template) structure.
+
+### Prerequisites
+
+- Go 1.24 or later
+- Make
+
+### Build
+
 ```bash
-make build
+make
 ```
 
 To create a distributable package:
 
 ```bash
 make dist
+```
+
+The plugin bundle will be created at `dist/com.manybugs.mattermost-plugin-kv-<version>.tar.gz`
+
+## Development
+
+### Building
+
+```bash
+# Install dependencies
+make deps
+
+# Build for all platforms
+make server
+
+# Build and bundle
+make dist
+```
+
+### Cleaning
+
+```bash
+make clean
 ```
 
 ## Usage
@@ -67,8 +101,8 @@ Example: `/kv list my`
 
 ## Requirements
 
-- Mattermost Server v5.20.0 or later
-- Go 1.21 or later (for building from source)
+- Mattermost Server v6.2.1 or later
+- Go 1.24 or later (for building from source)
 
 ## License
 
