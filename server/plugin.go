@@ -35,14 +35,18 @@ func (p *Plugin) OnActivate() error {
 
 // ExecuteCommand handles slash command execution
 func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
-	trigger := strings.TrimPrefix(strings.Fields(args.Command)[0], "/")
+	// Parse command arguments
+	parts := strings.Fields(args.Command)
+	if len(parts) == 0 {
+		return p.sendHelpResponse(), nil
+	}
+
+	trigger := strings.TrimPrefix(parts[0], "/")
 
 	if trigger != "kv" {
 		return &model.CommandResponse{}, nil
 	}
 
-	// Parse command arguments
-	parts := strings.Fields(args.Command)
 	if len(parts) < 2 {
 		return p.sendHelpResponse(), nil
 	}
