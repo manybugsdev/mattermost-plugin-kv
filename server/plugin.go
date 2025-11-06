@@ -241,6 +241,4 @@ func (p *Plugin) sendErrorResponse(message string) *model.CommandResponse {
 	}
 }
 
-func main() {
-	plugin.ClientMain(&Plugin{})
-}
+// See https://developers.mattermost.com/extend/plugins/server/reference/

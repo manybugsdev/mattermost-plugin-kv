@@ -1,33 +1,13 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool
-*.out
-
-# Dependency directories
-vendor/
-
-# Go workspace file
-go.work
-
-# Build artifacts
-server/dist/
+bin/
 dist/
+webapp/src/manifest.ts
+server/manifest.go
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# OS
+# Mac
 .DS_Store
-Thumbs.db
+
+# Jetbrains
+.idea/
+
+# VS Code
+.vscode
