@@ -2,6 +2,9 @@ package main
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidateKey(t *testing.T) {
@@ -65,4 +68,14 @@ func TestValidateKey(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestPluginManifest(t *testing.T) {
+	p := &Plugin{}
+	m := p.Manifest()
+
+	require.NotNil(t, m, "Manifest should not be nil")
+	assert.Equal(t, "com.manybugs.mattermost-plugin-kv", m.Id, "Plugin ID should match")
+	assert.Equal(t, "KV Manager", m.Name, "Plugin name should match")
+	assert.NotEmpty(t, m.Version, "Plugin version should not be empty")
 }

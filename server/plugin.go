@@ -22,6 +22,11 @@ type Plugin struct {
 	plugin.MattermostPlugin
 }
 
+// Manifest returns the plugin manifest
+func (p *Plugin) Manifest() *model.Manifest {
+	return manifest
+}
+
 // validateKey checks if a key is valid and safe to use
 func validateKey(key string) error {
 	if len(key) == 0 {
