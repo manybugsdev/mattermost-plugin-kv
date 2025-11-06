@@ -7,8 +7,11 @@ GOBIN ?= $(shell go env GOPATH)/bin
 
 # Plugin configuration
 PLUGIN_ID = com.manybugs.mattermost-plugin-kv
-PLUGIN_VERSION = $(shell git describe --tags --always --dirty 2>/dev/null || echo "0.0.0")
+PLUGIN_VERSION = $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUNDLE_NAME = $(PLUGIN_ID)-$(PLUGIN_VERSION).tar.gz
+
+# Tool versions
+GOLANGCI_LINT_VERSION = v1.64.8
 
 # Directories
 DIST_DIR = dist
@@ -45,7 +48,8 @@ bundle:
 	@rm -rf $(DIST_DIR)
 	@mkdir -p $(DIST_DIR)/$(PLUGIN_ID)/server
 	@cp -r $(SERVER_DIST_DIR) $(DIST_DIR)/$(PLUGIN_ID)/server/
-	@cp plugin.json $(DIST_DIR)/$(PLUGIN_ID)/
+	@# Update plugin.json with version
+	@cat plugin.json | jq '.version = "$(PLUGIN_VERSION)"' > $(DIST_DIR)/$(PLUGIN_ID)/plugin.json
 	@if [ -d "$(ASSETS_DIR)" ]; then cp -r $(ASSETS_DIR) $(DIST_DIR)/$(PLUGIN_ID)/; fi
 	@cd $(DIST_DIR) && tar -czf $(BUNDLE_NAME) $(PLUGIN_ID)
 	@echo Plugin bundle created at: $(DIST_DIR)/$(BUNDLE_NAME)
@@ -64,7 +68,7 @@ test:
 .PHONY: install-go-tools
 install-go-tools:
 	@echo Installing Go tools
-	@$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+	@$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
 ## Check code style
 .PHONY: check-style
