@@ -2,67 +2,52 @@ package main
 
 import (
 	"testing"
+
+	"github.com/mattermost/mattermost/server/public/model"
+	"github.com/mattermost/mattermost/server/public/plugin"
+	"github.com/mattermost/mattermost/server/public/plugin/plugintest"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
-func TestValidateKey(t *testing.T) {
-	tests := []struct {
-		name    string
-		key     string
-		wantErr bool
-	}{
-		{
-			name:    "valid key",
-			key:     "mykey",
-			wantErr: false,
-		},
-		{
-			name:    "valid key with numbers",
-			key:     "mykey123",
-			wantErr: false,
-		},
-		{
-			name:    "valid key with underscore",
-			key:     "my_key",
-			wantErr: false,
-		},
-		{
-			name:    "valid key with dash",
-			key:     "my-key",
-			wantErr: false,
-		},
-		{
-			name:    "empty key",
-			key:     "",
-			wantErr: true,
-		},
-		{
-			name:    "key with slash",
-			key:     "my/key",
-			wantErr: true,
-		},
-		{
-			name:    "key with backslash",
-			key:     "my\\key",
-			wantErr: true,
-		},
-		{
-			name:    "key with double dots",
-			key:     "my..key",
-			wantErr: true,
-		},
-		{
-			name:    "key too long",
-			key:     string(make([]byte, 257)),
-			wantErr: true,
-		},
+func TestOnActivate(t *testing.T) {
+	p := &Plugin{}
+	api := &plugintest.API{}
+
+	// Expect the LogInfo call
+	api.On("LogInfo", "Hello World plugin has been activated!").Return(nil)
+
+	p.SetAPI(api)
+
+	err := p.OnActivate()
+	assert.NoError(t, err)
+
+	api.AssertExpectations(t)
+}
+
+func TestMessageHasBeenPosted(t *testing.T) {
+	p := &Plugin{}
+	api := &plugintest.API{}
+
+	post := &model.Post{
+		UserId:    "user123",
+		ChannelId: "channel123",
+		Message:   "Test message",
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := validateKey(tt.key)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("validateKey() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	// Expect the LogInfo call
+	api.On("LogInfo", "User user123 posted: Test message").Return(nil)
+
+	// Expect the SendEphemeralPost call
+	api.On("SendEphemeralPost", "user123", mock.MatchedBy(func(p *model.Post) bool {
+		return p.UserId == "user123" &&
+			p.ChannelId == "channel123" &&
+			p.Message == "Hello from Hello World plugin!"
+	})).Return(&model.Post{})
+
+	p.SetAPI(api)
+
+	p.MessageHasBeenPosted(&plugin.Context{}, post)
+
+	api.AssertExpectations(t)
 }

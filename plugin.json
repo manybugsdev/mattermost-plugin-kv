@@ -1,7 +1,7 @@
 {
-    "id": "com.manybugs.mattermost-plugin-kv",
-    "name": "KV Manager",
-    "description": "A plugin to manage Mattermost KV store with CRUD operations",
+    "id": "com.manybugs.mattermost-plugin-hello-world",
+    "name": "Hello World",
+    "description": "A simple hello world plugin that demonstrates basic Mattermost plugin functionality",
     "homepage_url": "https://github.com/manybugsdev/mattermost-plugin-kv",
     "support_url": "https://github.com/manybugsdev/mattermost-plugin-kv/issues",
     "icon_path": "assets/icon.svg",
