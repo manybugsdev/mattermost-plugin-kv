@@ -14,7 +14,7 @@ This plugin demonstrates the basic structure of a Mattermost plugin. When a user
 To build the plugin:
 
 ```bash
-go build -o plugin.exe plugin.go
+go build -o plugin plugin.go
 ```
 
 ## Installation
