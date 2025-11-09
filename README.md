@@ -11,10 +11,24 @@ This plugin demonstrates the basic structure of a Mattermost plugin. When a user
 
 ## Building
 
-To build the plugin:
+To build the plugin using the Makefile:
 
 ```bash
-go build -o plugin plugin.go
+make
+```
+
+This will create both `plugin.exe` and `plugin.tar.gz`.
+
+To clean build artifacts:
+
+```bash
+make clean
+```
+
+For help with available make targets:
+
+```bash
+make help
 ```
 
 ## Installation
