@@ -1,13 +1,40 @@
-# Mattermost Hello World Plugin
+# Mattermost KV Store Manager Plugin
 
-A simple hello-world plugin for Mattermost.
+A plugin for managing key-value pairs in Mattermost's built-in KV database.
 
-This plugin demonstrates the basic structure of a Mattermost plugin. When a user posts "Hello, world!", the plugin will modify the message by appending a note that it was modified by the plugin.
+This plugin provides a `/kv` slash command that allows you to perform CRUD operations on the plugin's KV store directly from Mattermost.
 
 ## Features
 
-- Intercepts messages containing "Hello, world!"
-- Modifies the message to demonstrate plugin functionality
+- **Set** key-value pairs
+- **Get** values by key
+- **Delete** individual keys
+- **List** all stored keys
+- **Delete all** keys at once
+- User-friendly command interface with help documentation
+
+## Usage
+
+Once the plugin is installed and activated, you can use the `/kv` command in any channel:
+
+### Available Commands
+
+- `/kv set <key> <value>` - Set a key-value pair
+- `/kv get <key>` - Get the value for a key
+- `/kv delete <key>` - Delete a key-value pair
+- `/kv list` - List all keys in the store
+- `/kv deleteall` - Delete all key-value pairs
+- `/kv help` - Show help message
+
+### Examples
+
+```
+/kv set mykey Hello World
+/kv get mykey
+/kv list
+/kv delete mykey
+/kv deleteall
+```
 
 ## Building
 
