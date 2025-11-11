@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql/driver"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/mattermost/mattermost/server/public/model"
@@ -269,7 +270,7 @@ func (p *Plugin) isPostgreSQL() bool {
 		return false
 	}
 	driverName := *config.SqlSettings.DriverName
-	return strings.Contains(strings.ToLower(driverName), "postgres")
+	return driverName == "postgres" || driverName == "postgresql"
 }
 
 // formatSQLQuery converts MySQL-style placeholders (?) to database-specific placeholders
@@ -283,7 +284,8 @@ func (p *Plugin) formatSQLQuery(query string) string {
 	paramNum := 1
 	for _, ch := range query {
 		if ch == '?' {
-			result.WriteString(fmt.Sprintf("$%d", paramNum))
+			result.WriteRune('$')
+			result.WriteString(strconv.Itoa(paramNum))
 			paramNum++
 		} else {
 			result.WriteRune(ch)
