@@ -262,6 +262,36 @@ type KVEntry struct {
 	Value    []byte
 }
 
+// isPostgreSQL checks if the database driver is PostgreSQL
+func (p *Plugin) isPostgreSQL() bool {
+	config := p.API.GetConfig()
+	if config == nil || config.SqlSettings.DriverName == nil {
+		return false
+	}
+	driverName := *config.SqlSettings.DriverName
+	return driverName == "postgres"
+}
+
+// formatSQLQuery converts MySQL-style placeholders (?) to database-specific placeholders
+func (p *Plugin) formatSQLQuery(query string) string {
+	if !p.isPostgreSQL() {
+		return query
+	}
+
+	// Convert MySQL-style ? placeholders to PostgreSQL-style $1, $2, etc.
+	result := ""
+	paramNum := 1
+	for _, ch := range query {
+		if ch == '?' {
+			result += fmt.Sprintf("$%d", paramNum)
+			paramNum++
+		} else {
+			result += string(ch)
+		}
+	}
+	return result
+}
+
 // handleListAll lists all keys from all plugins using database access
 func (p *Plugin) handleListAll() (*model.CommandResponse, *model.AppError) {
 	entries, err := p.getAllPluginKVEntries()
@@ -355,8 +385,8 @@ func (p *Plugin) getPluginKVValue(pluginID, key string) ([]byte, error) {
 	}
 	defer p.Driver.ConnClose(connID)
 
-	// Query the PluginKeyValueStore table
-	query := "SELECT PValue FROM PluginKeyValueStore WHERE PluginId = ? AND PKey = ?"
+	// Query the PluginKeyValueStore table with database-specific placeholders
+	query := p.formatSQLQuery("SELECT PValue FROM PluginKeyValueStore WHERE PluginId = ? AND PKey = ?")
 	args := []driver.NamedValue{
 		{Ordinal: 1, Value: pluginID},
 		{Ordinal: 2, Value: key},
