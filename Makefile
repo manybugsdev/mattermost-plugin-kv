@@ -10,6 +10,9 @@ PLUGIN_ARCHIVE := plugin.tar.gz
 
 # Go build flags
 GO_BUILD_FLAGS := -trimpath
+# Target platform for Mattermost plugins (ensures cross-platform builds work correctly)
+GOOS := linux
+GOARCH := amd64
 
 .PHONY: all
 all: $(PLUGIN_EXECUTABLE) $(PLUGIN_ARCHIVE)
@@ -19,7 +22,7 @@ clean:
 	rm -f $(PLUGIN_EXECUTABLE) $(PLUGIN_ARCHIVE)
 
 $(PLUGIN_EXECUTABLE): plugin.go go.mod go.sum
-	go build $(GO_BUILD_FLAGS) -o $(PLUGIN_EXECUTABLE) plugin.go
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build $(GO_BUILD_FLAGS) -o $(PLUGIN_EXECUTABLE) plugin.go
 
 $(PLUGIN_ARCHIVE): $(PLUGIN_EXECUTABLE) plugin.json
 	tar -czvf $(PLUGIN_ARCHIVE) plugin.json $(PLUGIN_EXECUTABLE)

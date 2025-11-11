@@ -44,7 +44,9 @@ To build the plugin using the Makefile:
 make
 ```
 
-This will create both `plugin.exe` and `plugin.tar.gz`.
+This will create both `plugin` (the executable) and `plugin.tar.gz` (the distribution archive).
+
+The build process automatically compiles for `linux/amd64`, which is the standard platform for Mattermost servers. This ensures the plugin will work correctly regardless of your development platform (macOS, Windows, or Linux).
 
 To clean build artifacts:
 
