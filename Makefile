@@ -5,7 +5,7 @@ PLUGIN_ID := $(shell cat plugin.json | grep '"id"' | sed 's/.*"id": "\(.*\)",/\1
 PLUGIN_VERSION := $(shell cat plugin.json | grep '"version"' | sed 's/.*"version": "\(.*\)",/\1/')
 
 # Build configuration
-PLUGIN_EXECUTABLE := plugin.exe
+PLUGIN_EXECUTABLE := plugin
 PLUGIN_ARCHIVE := plugin.tar.gz
 
 # Go build flags
