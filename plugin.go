@@ -269,7 +269,7 @@ func (p *Plugin) isPostgreSQL() bool {
 		return false
 	}
 	driverName := *config.SqlSettings.DriverName
-	return driverName == "postgres"
+	return strings.Contains(strings.ToLower(driverName), "postgres")
 }
 
 // formatSQLQuery converts MySQL-style placeholders (?) to database-specific placeholders
