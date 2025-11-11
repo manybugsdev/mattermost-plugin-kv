@@ -279,17 +279,17 @@ func (p *Plugin) formatSQLQuery(query string) string {
 	}
 
 	// Convert MySQL-style ? placeholders to PostgreSQL-style $1, $2, etc.
-	result := ""
+	var result strings.Builder
 	paramNum := 1
 	for _, ch := range query {
 		if ch == '?' {
-			result += fmt.Sprintf("$%d", paramNum)
+			result.WriteString(fmt.Sprintf("$%d", paramNum))
 			paramNum++
 		} else {
-			result += string(ch)
+			result.WriteRune(ch)
 		}
 	}
-	return result
+	return result.String()
 }
 
 // handleListAll lists all keys from all plugins using database access
