@@ -168,49 +168,9 @@ func (p *Plugin) handleDelete(args []string) (*model.CommandResponse, *model.App
 	}, nil
 }
 
-// handleList lists all keys
+// handleList lists all keys from all plugins
 func (p *Plugin) handleList(args []string) (*model.CommandResponse, *model.AppError) {
-	// Check if --all flag is present
-	showAll := false
-	for _, arg := range args {
-		if arg == "--all" {
-			showAll = true
-			break
-		}
-	}
-
-	if showAll {
-		return p.handleListAll()
-	}
-
-	page := 0
-	perPage := 100
-
-	keys, err := p.API.KVList(page, perPage)
-	if err != nil {
-		return &model.CommandResponse{
-			ResponseType: model.CommandResponseTypeEphemeral,
-			Text:         fmt.Sprintf("Error listing keys: %s", err.Error()),
-		}, nil
-	}
-
-	if len(keys) == 0 {
-		return &model.CommandResponse{
-			ResponseType: model.CommandResponseTypeEphemeral,
-			Text:         "No keys found in the KV store",
-		}, nil
-	}
-
-	var text strings.Builder
-	text.WriteString(fmt.Sprintf("**KV Store Keys** (showing %d keys):\n", len(keys)))
-	for i, key := range keys {
-		text.WriteString(fmt.Sprintf("%d. `%s`\n", i+1, key))
-	}
-
-	return &model.CommandResponse{
-		ResponseType: model.CommandResponseTypeEphemeral,
-		Text:         text.String(),
-	}, nil
+	return p.handleListAll()
 }
 
 // handleDeleteAll removes all key-value pairs
@@ -237,8 +197,7 @@ func (p *Plugin) getHelpResponse() *model.CommandResponse {
 - ` + "`/kv get <key>`" + ` - Get the value for a key
 - ` + "`/kv get <pluginid:key>`" + ` - Get the value for a key from another plugin
 - ` + "`/kv delete <key>`" + ` - Delete a key-value pair
-- ` + "`/kv list`" + ` - List all keys in this plugin's store
-- ` + "`/kv list --all`" + ` - List all keys from all plugins
+- ` + "`/kv list`" + ` - List all keys from all plugins
 - ` + "`/kv deleteall`" + ` - Delete all key-value pairs
 - ` + "`/kv help`" + ` - Show this help message
 
@@ -246,7 +205,7 @@ func (p *Plugin) getHelpResponse() *model.CommandResponse {
 - ` + "`/kv set mykey Hello World`" + `
 - ` + "`/kv get mykey`" + `
 - ` + "`/kv get com.manybugs.mattermost-plugin-feed:some-key`" + `
-- ` + "`/kv list --all`" + `
+- ` + "`/kv list`" + `
 - ` + "`/kv delete mykey`" + `
 `
 
